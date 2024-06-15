@@ -4,7 +4,7 @@ class User(db.Model):
     # Define the name of the table
     __tablename__ = "users"
     #Attributes of the table
-    id = db.Column(db.Integer, primarykey=True)
+    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
