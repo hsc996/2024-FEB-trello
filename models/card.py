@@ -9,9 +9,11 @@ class Card(db.Model):
     title = db.Column(db.String, nullable=False)
     description = db.Column(db.String)
     date = db.Column(db.Date)
-    status = db.Column(db.Stting)
+    status = db.Column(db.String)
     priority = db.Column(db.String)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+
+    user = db.relationship('User', back_populates='cards')
 
 
 class CardSchema(ma.Schema):
@@ -24,4 +26,3 @@ class CardSchema(ma.Schema):
 
 card_schema = CardSchema()
 cards_schema = CardSchema(many=True)
-user = db.relationship('User', back_populates='cards')
