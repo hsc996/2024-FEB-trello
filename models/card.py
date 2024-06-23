@@ -14,7 +14,7 @@ class Card(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     user = db.relationship('User', back_populates="cards")
-    comment = db.relatioship('Comment', back_populates="card", cascade="all, delete")
+    comments = db.relationship('Comment', back_populates="card", cascade="all, delete")
 
 
 class CardSchema(ma.Schema):
@@ -23,7 +23,8 @@ class CardSchema(ma.Schema):
     comments = fields.List(fields.Nested("CommentSchema", exclude=["card"]))
 
     class Meta:
-        fields = ( "id", "title", "description", "date", "status", "priority", "user", "comments")
+        fields = ("id", "title", "description", "date", "status", "priority", "user", "comment")
+        ordered = True
 
 
 card_schema = CardSchema()
