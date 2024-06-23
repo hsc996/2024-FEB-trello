@@ -23,7 +23,7 @@ class CardSchema(ma.Schema):
     comments = fields.List(fields.Nested("CommentSchema", exclude=["card"]))
 
     class Meta:
-        fields = ("id", "title", "description", "date", "status", "priority", "user", "comment")
+        fields = ("id", "title", "description", "date", "status", "priority", "user", "comments")
         ordered = True
 
 
