@@ -1,27 +1,30 @@
-from flask import Blueprint, request
 from datetime import date
-from flask_jwt_extended import jwt_required, get_jwt_identity
 
+from flask import Blueprint, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from init import db
 from models.card import Card, card_schema, cards_schema
+from controllers.comment_controller import comments_bp
 
 cards_bp = Blueprint("cards", __name__, url_prefix="/cards")
+cards_bp.register_blueprint(comments_bp)
 
 # /cards - GET - fetch all cards
 # /cards/<id> - GET - fetch a single card
-# /cards -  POST - create a new card
+# /cards - POST - create a new card
 # /cards/<id> - DELETE - delete a card
 # /cards/<id> - PUT, PATCH - edit a card
 
 # /cards - GET - fetch all cards
 @cards_bp.route("/")
 def get_all_cards():
-    stmt = db.select(Card)
+    # fetch all cards and order them according to date in descending order
+    stmt = db.select(Card).order_by(Card.date.desc())
     cards = db.session.scalars(stmt)
     return cards_schema.dump(cards)
 
-# /cards/<id> - GET - fetcha single card
+# /cards/<id> - GET - fetch a single card
 @cards_bp.route("/<int:card_id>")
 def get_one_card(card_id):
     stmt = db.select(Card).filter_by(id=card_id)
@@ -31,10 +34,9 @@ def get_one_card(card_id):
         return card_schema.dump(card)
     else:
         return {"error": f"Card with id {card_id} not found"}, 404
-
+    
 
 # /cards - POST - create a new card
-
 @cards_bp.route("/", methods=["POST"])
 @jwt_required()
 def create_card():
@@ -56,7 +58,6 @@ def create_card():
     return card_schema.dump(card)
 
 
-
 # /cards/<id> - DELETE - delete a card
 @cards_bp.route("/<int:card_id>", methods=["DELETE"])
 @jwt_required()
@@ -76,10 +77,7 @@ def delete_card(card_id):
         return {"error": f"Card with id {card_id} not found"}, 404
     
 
-
 # /cards/<id> - PUT, PATCH - edit a card
-# /cards/<id> - PUT, PATCH - edit a card
-
 @cards_bp.route("/<int:card_id>", methods=["PUT", "PATCH"])
 @jwt_required()
 def update_card(card_id):
@@ -88,7 +86,7 @@ def update_card(card_id):
     # get the card from the database
     stmt = db.select(Card).filter_by(id=card_id)
     card = db.session.scalar(stmt)
-    # if card
+    # if card exists
     if card:
         # update the fields as required
         card.title = body_data.get("title") or card.title
