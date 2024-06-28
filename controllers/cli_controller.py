@@ -87,8 +87,6 @@ def seed_tables():
         )
     ]
 
- 
-
     db.session.add_all(comments)
 
     db.session.commit()
