@@ -8,7 +8,9 @@ from flask_jwt_extended import create_access_token
 from init import bcrypt, db
 from models.user import User, user_schema
 
+
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
+
 
 @auth_bp.route("register", methods=["POST"])
 def register_user():
@@ -41,6 +43,7 @@ def register_user():
             # unique violation
         if err.orig.pgcode == errorcodes.UNIQUE_VIOLATION:
             return {"error": "Email address already in use"}, 409
+
 
 @auth_bp.route("/login", methods=["POST"])
 def login_user():
